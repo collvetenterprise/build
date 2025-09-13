@@ -1,0 +1,52 @@
+{
+  "tier": "prod",
+  "environment": "production",
+  "buildSteps": [
+    "install-dependencies",
+    "run-linter",
+    "run-tests",
+    "run-integration-tests",
+    "run-performance-tests",
+    "security-scan",
+    "vulnerability-assessment",
+    "compile-assets",
+    "optimize-assets",
+    "package-artifacts",
+    "generate-documentation",
+    "create-deployment-manifest"
+  ],
+  "deploymentTargets": [
+    "prod-cluster-primary",
+    "prod-cluster-secondary"
+  ],
+  "resourceLimits": {
+    "cpu": "4",
+    "memory": "8Gi",
+    "timeout": "30m"
+  },
+  "securityLevel": "maximum",
+  "features": {
+    "enableMCP": true,
+    "enableGIS": true,
+    "enableAgents": true,
+    "enableMGRS": true,
+    "enableTracing": true,
+    "enableMetrics": true,
+    "enableSSL": true,
+    "enableAuth": true,
+    "enableAuditLogging": true,
+    "enableEncryption": true
+  },
+  "scaling": {
+    "minInstances": 3,
+    "maxInstances": 10,
+    "targetCPU": 50
+  },
+  "monitoring": {
+    "healthCheckInterval": 15,
+    "metricsCollectionInterval": 5,
+    "alertingEnabled": true,
+    "logLevel": "warn",
+    "retentionDays": 90
+  }
+}

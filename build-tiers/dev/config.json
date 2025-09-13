@@ -1,0 +1,39 @@
+{
+  "tier": "dev",
+  "environment": "development",
+  "buildSteps": [
+    "install-dependencies",
+    "run-linter",
+    "run-tests",
+    "compile-assets",
+    "package-artifacts"
+  ],
+  "deploymentTargets": [
+    "local",
+    "dev-cluster"
+  ],
+  "resourceLimits": {
+    "cpu": "1",
+    "memory": "2Gi",
+    "timeout": "10m"
+  },
+  "securityLevel": "basic",
+  "features": {
+    "enableMCP": true,
+    "enableGIS": true,
+    "enableAgents": true,
+    "enableMGRS": true,
+    "enableTracing": true,
+    "enableMetrics": true
+  },
+  "scaling": {
+    "minInstances": 1,
+    "maxInstances": 3,
+    "targetCPU": 70
+  },
+  "monitoring": {
+    "healthCheckInterval": 30,
+    "metricsCollectionInterval": 10,
+    "alertingEnabled": false
+  }
+}
