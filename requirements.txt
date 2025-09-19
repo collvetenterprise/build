@@ -1,0 +1,63 @@
+# Core dependencies for AI-driven phone server and internet gateway
+numpy>=1.21.0
+pandas>=1.3.0
+scikit-learn>=1.0.0
+tensorflow>=2.8.0
+torch>=1.11.0
+transformers>=4.15.0
+
+# Network and communication
+requests>=2.25.0
+websockets>=10.0
+asyncio-mqtt>=0.10.0
+paramiko>=2.8.0
+
+# Voice processing and NLP
+speechrecognition>=3.8.0
+pydub>=0.25.0
+nltk>=3.6.0
+spacy>=3.4.0
+
+# Telephony and VoIP
+twilio>=7.15.0
+pyst2>=0.5.0
+
+# Network automation and monitoring
+scapy>=2.4.0
+netmiko>=4.0.0
+napalm>=4.0.0
+pysnmp>=4.4.0
+
+# Security and threat detection
+cryptography>=3.4.0
+hashlib-compat>=1.0.0
+
+# Database and storage
+sqlalchemy>=1.4.0
+redis>=4.0.0
+pymongo>=4.0.0
+
+# Web framework and APIs
+fastapi>=0.75.0
+uvicorn>=0.17.0
+pydantic>=1.9.0
+
+# Configuration and logging
+pyyaml>=6.0
+python-dotenv>=0.19.0
+loguru>=0.6.0
+
+# Testing and development
+pytest>=7.0.0
+pytest-asyncio>=0.20.0
+black>=22.0.0
+flake8>=4.0.0
+mypy>=0.930
+
+# Deployment and containerization
+docker>=5.0.0
+kubernetes>=24.0.0
+
+# Monitoring and observability
+prometheus-client>=0.13.0
+grafana-api>=1.0.0
