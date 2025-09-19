@@ -1,0 +1,80 @@
+# AI Automation Configuration for Franklin T10 and HP ProLiant 380
+system:
+  name: "AI Gateway Automation System"
+  version: "1.0.0"
+  log_level: "INFO"
+
+# Hardware Configuration
+hardware:
+  gateway:
+    model: "Android Franklin T10"
+    ip_address: "192.168.1.1"
+    management_port: 8080
+    api_endpoint: "/api/v1"
+    
+  server:
+    model: "HP ProLiant Server 380"
+    ip_address: "192.168.1.100"
+    management_port: 443
+    ilo_endpoint: "/redfish/v1"
+
+# AI Models Configuration
+ai_models:
+  call_routing:
+    model_path: "models/call_routing_model.pkl"
+    confidence_threshold: 0.85
+    
+  voice_recognition:
+    model_type: "speech_recognition"
+    language: "en-US"
+    confidence_threshold: 0.8
+    
+  fraud_detection:
+    model_path: "models/fraud_detection_model.pkl"
+    anomaly_threshold: 0.95
+    
+  traffic_analysis:
+    model_path: "models/traffic_analysis_model.pkl"
+    prediction_window: 300  # seconds
+
+# Network Configuration
+network:
+  monitoring_interval: 30  # seconds
+  threat_detection:
+    enabled: true
+    blacklist_update_interval: 3600  # seconds
+  
+  qos:
+    enabled: true
+    priority_rules:
+      - protocol: "SIP"
+        priority: "high"
+      - protocol: "RTP"
+        priority: "high"
+      - protocol: "HTTP"
+        priority: "medium"
+
+# Phone Server Configuration
+phone_server:
+  sip_port: 5060
+  rtp_port_range: "10000-20000"
+  max_concurrent_calls: 100
+  call_recording_enabled: true
+
+# Security Configuration
+security:
+  encryption_enabled: true
+  firewall_auto_update: true
+  intrusion_detection: true
+  
+# Database Configuration
+database:
+  type: "sqlite"
+  path: "data/automation_system.db"
+
+# API Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  auth_required: true
+  api_key_header: "X-API-Key"
