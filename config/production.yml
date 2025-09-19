@@ -1,0 +1,154 @@
+server:
+  port: 3000
+  host: "0.0.0.0"
+  environment: "production"
+
+logging:
+  level: "info"
+  enableConsole: false
+  enableFile: true
+  maxFileSize: "50MB"
+  maxFiles: 10
+
+phoneServer:
+  callRouting:
+    modelPath: "./models/production/call-routing-model.json"
+    confidenceThreshold: 0.85
+    routingRules: {}
+    maxRoutingTime: 3000
+  
+  voiceProcessing:
+    modelPath: "./models/production/voice-model.json"
+    sampleRate: 16000
+    languageModels: ["en-US", "es-ES", "fr-FR", "de-DE", "it-IT"]
+    confidenceThreshold: 0.75
+    maxAudioLength: 60
+  
+  fraudDetection:
+    modelPath: "./models/production/fraud-detection-model.json"
+    riskThreshold: 0.75
+    blacklistPath: "./data/production/blacklist.json"
+    whitelistPath: "./data/production/whitelist.json"
+    maxCallDuration: 7200
+    maxCallsPerHour: 100
+  
+  maintenance:
+    modelPath: "./models/production/maintenance-model.json"
+    monitoringInterval: 30000
+    alertThreshold: 0.8
+    criticalThreshold: 0.95
+    metricsHistorySize: 2880
+
+internetGateway:
+  trafficManagement:
+    modelPath: "./models/production/traffic-model.json"
+    optimizationInterval: 15000
+    bandwidthThreshold: 0.85
+    latencyThreshold: 50
+    maxConnections: 50000
+  
+  threatDetection:
+    modelPath: "./models/production/threat-detection-model.json"
+    scanInterval: 5000
+    threatThreshold: 0.85
+    criticalThreshold: 0.98
+    whitelistPath: "./data/production/ip-whitelist.json"
+    blacklistPath: "./data/production/ip-blacklist.json"
+    maxLogEntries: 50000
+  
+  qosOptimization:
+    modelPath: "./models/production/qos-model.json"
+    optimizationInterval: 10000
+    learningRate: 0.0005
+    explorationRate: 0.05
+    rewardThreshold: 0.85
+  
+  selfHealing:
+    modelPath: "./models/production/self-healing-model.json"
+    monitoringInterval: 15000
+    healingThreshold: 0.8
+    criticalThreshold: 0.95
+    maxHealingAttempts: 5
+    healingCooldown: 180000
+
+database:
+  host: "${DB_HOST}"
+  port: "${DB_PORT}"
+  name: "${DB_NAME}"
+  username: "${DB_USER}"
+  password: "${DB_PASSWORD}"
+  ssl: true
+  pool:
+    min: 5
+    max: 50
+    acquireTimeoutMillis: 60000
+    idleTimeoutMillis: 600000
+
+redis:
+  host: "${REDIS_HOST}"
+  port: "${REDIS_PORT}"
+  password: "${REDIS_PASSWORD}"
+  db: 0
+  keyPrefix: "ai_gateway:prod:"
+  retryDelayOnFailover: 100
+  maxRetriesPerRequest: 5
+
+security:
+  jwtSecret: "${JWT_SECRET}"
+  jwtExpiresIn: "8h"
+  bcryptRounds: 12
+  rateLimiting:
+    windowMs: 900000 # 15 minutes
+    max: 1000 # requests per window
+  cors:
+    origin: ["${FRONTEND_URL}"]
+    credentials: true
+
+ai:
+  tensorflow:
+    backend: "cpu"
+    enableProfiling: false
+    memoryGrowth: true
+  models:
+    autoSave: true
+    saveInterval: 1800000 # 30 minutes
+    backupCount: 10
+  training:
+    batchSize: 64
+    learningRate: 0.0005
+    epochs: 200
+    validationSplit: 0.15
+
+monitoring:
+  enabled: true
+  interval: 15000
+  metrics:
+    system: true
+    application: true
+    business: true
+  alerts:
+    email:
+      enabled: true
+      smtp:
+        host: "${SMTP_HOST}"
+        port: "${SMTP_PORT}"
+        secure: true
+        auth:
+          user: "${SMTP_USER}"
+          pass: "${SMTP_PASSWORD}"
+      recipients: ["${ALERT_EMAIL_1}", "${ALERT_EMAIL_2}"]
+    webhook:
+      enabled: true
+      url: "${SLACK_WEBHOOK_URL}"
+
+telephony:
+  twilio:
+    accountSid: "${TWILIO_ACCOUNT_SID}"
+    authToken: "${TWILIO_AUTH_TOKEN}"
+    phoneNumber: "${TWILIO_PHONE_NUMBER}"
+  asterisk:
+    enabled: true
+    host: "${ASTERISK_HOST}"
+    port: "${ASTERISK_PORT}"
+    username: "${ASTERISK_USER}"
+    password: "${ASTERISK_PASSWORD}"

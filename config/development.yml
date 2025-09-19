@@ -1,0 +1,154 @@
+server:
+  port: 3000
+  host: "0.0.0.0"
+  environment: "development"
+
+logging:
+  level: "debug"
+  enableConsole: true
+  enableFile: true
+  maxFileSize: "10MB"
+  maxFiles: 5
+
+phoneServer:
+  callRouting:
+    modelPath: "./models/call-routing-model.json"
+    confidenceThreshold: 0.8
+    routingRules: {}
+    maxRoutingTime: 5000
+  
+  voiceProcessing:
+    modelPath: "./models/voice-model.json"
+    sampleRate: 16000
+    languageModels: ["en-US", "es-ES", "fr-FR"]
+    confidenceThreshold: 0.7
+    maxAudioLength: 30
+  
+  fraudDetection:
+    modelPath: "./models/fraud-detection-model.json"
+    riskThreshold: 0.7
+    blacklistPath: "./data/blacklist.json"
+    whitelistPath: "./data/whitelist.json"
+    maxCallDuration: 3600
+    maxCallsPerHour: 50
+  
+  maintenance:
+    modelPath: "./models/maintenance-model.json"
+    monitoringInterval: 60000
+    alertThreshold: 0.7
+    criticalThreshold: 0.9
+    metricsHistorySize: 1440
+
+internetGateway:
+  trafficManagement:
+    modelPath: "./models/traffic-model.json"
+    optimizationInterval: 30000
+    bandwidthThreshold: 0.8
+    latencyThreshold: 100
+    maxConnections: 10000
+  
+  threatDetection:
+    modelPath: "./models/threat-detection-model.json"
+    scanInterval: 10000
+    threatThreshold: 0.8
+    criticalThreshold: 0.95
+    whitelistPath: "./data/ip-whitelist.json"
+    blacklistPath: "./data/ip-blacklist.json"
+    maxLogEntries: 10000
+  
+  qosOptimization:
+    modelPath: "./models/qos-model.json"
+    optimizationInterval: 15000
+    learningRate: 0.001
+    explorationRate: 0.1
+    rewardThreshold: 0.8
+  
+  selfHealing:
+    modelPath: "./models/self-healing-model.json"
+    monitoringInterval: 30000
+    healingThreshold: 0.7
+    criticalThreshold: 0.9
+    maxHealingAttempts: 3
+    healingCooldown: 300000
+
+database:
+  host: "localhost"
+  port: 5432
+  name: "ai_phone_gateway_dev"
+  username: "postgres"
+  password: "password"
+  ssl: false
+  pool:
+    min: 2
+    max: 10
+    acquireTimeoutMillis: 30000
+    idleTimeoutMillis: 30000
+
+redis:
+  host: "localhost"
+  port: 6379
+  password: null
+  db: 0
+  keyPrefix: "ai_gateway:dev:"
+  retryDelayOnFailover: 100
+  maxRetriesPerRequest: 3
+
+security:
+  jwtSecret: "development-secret-key-change-in-production"
+  jwtExpiresIn: "24h"
+  bcryptRounds: 10
+  rateLimiting:
+    windowMs: 900000 # 15 minutes
+    max: 100 # requests per window
+  cors:
+    origin: ["http://localhost:3000", "http://localhost:3001"]
+    credentials: true
+
+ai:
+  tensorflow:
+    backend: "cpu"
+    enableProfiling: true
+    memoryGrowth: true
+  models:
+    autoSave: true
+    saveInterval: 3600000 # 1 hour
+    backupCount: 5
+  training:
+    batchSize: 32
+    learningRate: 0.001
+    epochs: 100
+    validationSplit: 0.2
+
+monitoring:
+  enabled: true
+  interval: 30000
+  metrics:
+    system: true
+    application: true
+    business: true
+  alerts:
+    email:
+      enabled: false
+      smtp:
+        host: "smtp.gmail.com"
+        port: 587
+        secure: false
+        auth:
+          user: "your-email@gmail.com"
+          pass: "your-password"
+      recipients: ["admin@example.com"]
+    webhook:
+      enabled: false
+      url: "https://hooks.slack.com/services/..."
+
+telephony:
+  twilio:
+    accountSid: "your-twilio-account-sid"
+    authToken: "your-twilio-auth-token"
+    phoneNumber: "your-twilio-phone-number"
+  asterisk:
+    enabled: false
+    host: "localhost"
+    port: 5038
+    username: "admin"
+    password: "secret"
