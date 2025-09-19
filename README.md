@@ -36,8 +36,24 @@ A comprehensive automation solution for managing Android Franklin T10 gateways a
 
 1. Clone the repository
 2. Install dependencies: `pip install -r requirements.txt`
-3. Configure devices in `config/devices.yml`
-4. Run the automation platform: `python main.py`
+3. Configure devices in `config/main.yml`
+4. Run the demo: `python demo.py`
+5. Start the automation platform: `python main.py`
+
+### Quick Demo
+
+Run the included demonstration script to see the platform capabilities:
+
+```bash
+python demo.py
+```
+
+This will show:
+- ✅ Configuration management and validation
+- ✅ Database operations and data persistence  
+- ✅ Alert system functionality
+- ✅ AI components (if dependencies available)
+- ✅ Web dashboard setup
 
 ## Architecture
 
