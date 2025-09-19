@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  automation-platform:
+    build: .
+    container_name: enterprise-automation
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./data:/app/data
+      - ./ai/models:/app/ai/models
+    environment:
+      - PYTHONPATH=/app
+      - CHROMEDRIVER_PATH=/usr/bin/chromedriver
+    restart: unless-stopped
+    networks:
+      - automation-network
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/api/stats')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  redis:
+    image: redis:7-alpine
+    container_name: automation-redis
+    restart: unless-stopped
+    networks:
+      - automation-network
+    volumes:
+      - redis-data:/data
+
+networks:
+  automation-network:
+    driver: bridge
+
+volumes:
+  redis-data:

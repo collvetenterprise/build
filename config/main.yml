@@ -1,0 +1,60 @@
+automation:
+  check_interval: 60  # seconds between health checks
+  retry_attempts: 3
+  timeout: 30
+
+devices:
+  franklin_t10:
+    enabled: true
+    ip_address: "192.168.0.1"
+    username: "admin"
+    password: "admin"
+    check_interval: 30
+    reboot_on_failure: true
+    max_failures: 3
+    
+  hp_proliant:
+    enabled: true
+    ilo_ip: "192.168.1.100"
+    username: "Administrator"
+    password: "password"
+    check_interval: 60
+    monitor_thermal: true
+    monitor_power: true
+    monitor_storage: true
+
+monitoring:
+  enabled: true
+  web_dashboard:
+    enabled: true
+    host: "0.0.0.0"
+    port: 5000
+    debug: false
+  alerts:
+    email:
+      enabled: false
+      smtp_server: "smtp.gmail.com"
+      smtp_port: 587
+      username: ""
+      password: ""
+      recipients: []
+    slack:
+      enabled: false
+      webhook_url: ""
+      channel: "#alerts"
+
+ai:
+  enabled: true
+  predictive_maintenance:
+    enabled: true
+    model_path: "ai/models/"
+    training_data_days: 30
+  anomaly_detection:
+    enabled: true
+    sensitivity: 0.8
+
+logging:
+  level: "INFO"
+  file: "logs/automation.log"
+  max_size_mb: 10
+  backup_count: 5
