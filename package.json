@@ -1,0 +1,46 @@
+{
+  "name": "ai-phone-gateway-innovations",
+  "version": "1.0.0",
+  "description": "AI innovations for phone server and internet gateway technology",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest",
+    "lint": "eslint src/",
+    "build": "npm run lint && npm run test",
+    "docker:build": "docker build -t ai-phone-gateway .",
+    "docker:run": "docker run -p 3000:3000 ai-phone-gateway"
+  },
+  "keywords": [
+    "ai",
+    "phone-server",
+    "internet-gateway",
+    "automation",
+    "machine-learning",
+    "telephony",
+    "network-management"
+  ],
+  "author": "collvetenterprise",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "twilio": "^4.19.3",
+    "@tensorflow/tfjs-node": "^4.15.0",
+    "socket.io": "^4.7.4",
+    "yaml": "^2.3.4",
+    "winston": "^3.11.0",
+    "dotenv": "^16.3.1",
+    "joi": "^17.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "eslint": "^8.55.0",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
