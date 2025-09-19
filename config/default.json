@@ -1,0 +1,167 @@
+{
+  "server": {
+    "port": 8080,
+    "environment": "development"
+  },
+  "phone": {
+    "sipPort": 5060,
+    "rtpPort": 10000,
+    "maxConcurrentCalls": 1000,
+    "codecs": ["G.711", "G.729", "G.722"],
+    "recordCalls": false,
+    "enableMetrics": true
+  },
+  "gateway": {
+    "httpPort": 8081,
+    "httpsPort": 8443,
+    "dnsPort": 5353,
+    "maxConnections": 10000,
+    "timeouts": {
+      "connection": 30000,
+      "request": 60000,
+      "dns": 5000
+    },
+    "security": {
+      "rateLimit": {
+        "enabled": true,
+        "maxRequestsPerMinute": 100,
+        "windowSize": 60000
+      },
+      "ddosProtection": {
+        "enabled": true,
+        "threshold": 1000,
+        "windowSize": 60000
+      },
+      "contentFiltering": {
+        "enabled": true,
+        "blockedDomains": [
+          "malware.example.com",
+          "phishing.example.com"
+        ]
+      }
+    },
+    "qos": {
+      "enabled": true,
+      "classes": {
+        "voice": {
+          "priority": "high",
+          "bandwidthLimit": -1,
+          "latencyTarget": 50,
+          "jitterTarget": 10
+        },
+        "video": {
+          "priority": "high",
+          "bandwidthLimit": 10000000,
+          "latencyTarget": 100,
+          "jitterTarget": 20
+        },
+        "web": {
+          "priority": "medium",
+          "bandwidthLimit": 5000000,
+          "latencyTarget": 200,
+          "jitterTarget": 50
+        },
+        "bulk": {
+          "priority": "low",
+          "bandwidthLimit": 1000000,
+          "latencyTarget": 1000,
+          "jitterTarget": 100
+        }
+      }
+    }
+  },
+  "ai": {
+    "enabled": true,
+    "models": {
+      "callRouting": {
+        "type": "decision_tree",
+        "enabled": true,
+        "retrainInterval": 86400000
+      },
+      "trafficOptimization": {
+        "type": "neural_network",
+        "enabled": true,
+        "retrainInterval": 86400000
+      },
+      "fraudDetection": {
+        "type": "random_forest",
+        "enabled": true,
+        "retrainInterval": 43200000
+      },
+      "qualityOptimization": {
+        "type": "gradient_boosting",
+        "enabled": true,
+        "retrainInterval": 86400000
+      }
+    },
+    "analytics": {
+      "enabled": true,
+      "processingInterval": 30000,
+      "retentionPeriod": 2592000000
+    },
+    "optimization": {
+      "enabled": true,
+      "interval": 30000,
+      "autoAdjust": true
+    }
+  },
+  "database": {
+    "type": "mongodb",
+    "url": "mongodb://localhost:27017/ai-phone-gateway",
+    "options": {
+      "useNewUrlParser": true,
+      "useUnifiedTopology": true
+    }
+  },
+  "redis": {
+    "enabled": false,
+    "url": "redis://localhost:6379",
+    "options": {
+      "retryDelayOnFailover": 100,
+      "maxRetriesPerRequest": 3
+    }
+  },
+  "logging": {
+    "level": "info",
+    "file": {
+      "enabled": true,
+      "maxSize": "5MB",
+      "maxFiles": 5
+    },
+    "console": {
+      "enabled": true,
+      "colorize": true
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "metricsInterval": 10000,
+    "healthCheckInterval": 30000,
+    "alerts": {
+      "enabled": true,
+      "thresholds": {
+        "callQuality": 3.0,
+        "connectionCount": 8000,
+        "errorRate": 0.05,
+        "responseTime": 1000
+      }
+    }
+  },
+  "automation": {
+    "enabled": true,
+    "selfHealing": {
+      "enabled": true,
+      "maxRetries": 3,
+      "backoffMultiplier": 2
+    },
+    "scaling": {
+      "enabled": true,
+      "autoScale": false,
+      "thresholds": {
+        "cpuUsage": 0.8,
+        "memoryUsage": 0.85,
+        "connectionUtilization": 0.9
+      }
+    }
+  }
+}
