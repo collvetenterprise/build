@@ -1,0 +1,38 @@
+{
+  "name": "dynamic-build-environment",
+  "version": "1.0.0",
+  "description": "Dynamic Build Environment with Tier Structuring, CI/CD Pipeline, MCP Access Points, Signal GIS Focus Points, Agent Portal and MGRS functionality",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "jest",
+    "lint": "eslint src/",
+    "build": "npm run lint && npm test",
+    "build:dev": "npm run build",
+    "build:staging": "npm run build && npm run package:staging",
+    "build:prod": "npm run build && npm run package:prod",
+    "package:staging": "echo 'Packaging for staging environment'",
+    "package:prod": "echo 'Packaging for production environment'"
+  },
+  "keywords": [
+    "build",
+    "ci-cd",
+    "mcp",
+    "gis",
+    "mgrs",
+    "dynamic-environment"
+  ],
+  "author": "collvetenterprise",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.55.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2",
+    "supertest": "^7.1.4"
+  }
+}
