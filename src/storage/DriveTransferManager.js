@@ -4,6 +4,12 @@ const crypto = require('crypto');
 const OneDriveClient = require('./onedrive/OneDriveClient');
 const GoogleDriveClient = require('./google/GoogleDriveClient');
 
+// Google Drive's simple/multipart upload endpoint rejects files larger than 5MB.
+const MAX_SIMPLE_UPLOAD_SIZE = 5 * 1024 * 1024;
+// Terminal jobs older than this are pruned on each new job creation to bound memory use.
+const JOB_RETENTION_MS = 24 * 60 * 60 * 1000;
+const TERMINAL_STATUSES = ['completed', 'completed_with_errors', 'failed'];
+
 function streamToBuffer(stream) {
     return new Promise((resolve, reject) => {
         const chunks = [];
@@ -34,12 +40,24 @@ class DriveTransferManager {
         return this.oneDriveClient.isConfigured() && this.googleDriveClient.isConfigured();
     }
 
+    pruneOldJobs() {
+        const cutoff = Date.now() - JOB_RETENTION_MS;
+        for (const [jobId, job] of this.jobs) {
+            if (TERMINAL_STATUSES.includes(job.status) && job.updatedAt.getTime() < cutoff) {
+                this.jobs.delete(jobId);
+            }
+        }
+    }
+
     createJob({ oneDriveItemId, oneDriveFolderId, googleDriveFolderId }) {
+        this.pruneOldJobs();
+
         const job = {
             id: crypto.randomUUID(),
             status: 'pending',
             source: oneDriveItemId ? { itemId: oneDriveItemId } : { folderId: oneDriveFolderId },
             destination: { googleDriveFolderId: googleDriveFolderId || null },
+            totalFiles: null,
             results: [],
             error: null,
             createdAt: new Date(),
@@ -62,6 +80,11 @@ class DriveTransferManager {
 
     async transferSingleFile(itemId, googleDriveFolderId) {
         const file = await this.oneDriveClient.downloadItemStream(itemId);
+
+        if (file.size > MAX_SIMPLE_UPLOAD_SIZE) {
+            throw new Error(`File size (${(file.size / (1024 * 1024)).toFixed(2)}MB) exceeds the 5MB limit for simple multipart uploads`);
+        }
+
         const buffer = await streamToBuffer(file.stream);
 
         const uploaded = await this.googleDriveClient.uploadFile({
@@ -95,6 +118,8 @@ class DriveTransferManager {
                     }
                 }
             }
+
+            this.updateJob(job.id, { totalFiles: itemIds.length });
 
             const results = [];
             for (const itemId of itemIds) {

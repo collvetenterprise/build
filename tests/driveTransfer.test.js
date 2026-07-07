@@ -61,3 +61,70 @@ describe('Drive Transfer API', () => {
         expect(response.body.totalCount).toBe(0);
     });
 });
+
+describe('DriveTransferManager transfer logic', () => {
+    function fakeConfiguredClient(overrides = {}) {
+        return { isConfigured: () => true, ...overrides };
+    }
+
+    test('transferSingleFile rejects files larger than the 5MB simple-upload limit', async () => {
+        const oneDriveClient = fakeConfiguredClient({
+            downloadItemStream: async () => ({
+                name: 'big-file.bin',
+                mimeType: 'application/octet-stream',
+                size: 6 * 1024 * 1024
+            })
+        });
+        const googleDriveClient = fakeConfiguredClient({ uploadFile: jest.fn() });
+
+        const manager = new DriveTransferManager(oneDriveClient, googleDriveClient);
+
+        await expect(manager.transferSingleFile('item-1', 'folder-1')).rejects.toThrow(/5MB limit/);
+        expect(googleDriveClient.uploadFile).not.toHaveBeenCalled();
+    });
+
+    test('runJob records totalFiles once the folder listing resolves', async () => {
+        const { Readable } = require('stream');
+        const oneDriveClient = fakeConfiguredClient({
+            listChildren: async () => [
+                { id: 'a', isFolder: false },
+                { id: 'b', isFolder: false },
+                { id: 'sub-folder', isFolder: true }
+            ],
+            downloadItemStream: async (itemId) => ({
+                name: `${itemId}.txt`,
+                mimeType: 'text/plain',
+                size: 3,
+                stream: Readable.from([Buffer.from('hi!')])
+            })
+        });
+        const googleDriveClient = fakeConfiguredClient({
+            uploadFile: async () => ({ id: 'uploaded-id' })
+        });
+
+        const manager = new DriveTransferManager(oneDriveClient, googleDriveClient);
+        const job = manager.createJob({ oneDriveFolderId: 'folder-1', googleDriveFolderId: 'dest' });
+
+        await manager.runJob(job);
+
+        expect(job.totalFiles).toBe(2);
+        expect(job.status).toBe('completed');
+        expect(job.results).toHaveLength(2);
+    });
+
+    test('pruneOldJobs removes terminal jobs past the retention window but keeps recent ones', () => {
+        const manager = new DriveTransferManager(fakeConfiguredClient(), fakeConfiguredClient());
+
+        const oldJob = manager.createJob({ oneDriveItemId: 'old' });
+        manager.updateJob(oldJob.id, { status: 'completed' });
+        manager.jobs.get(oldJob.id).updatedAt = new Date(Date.now() - 25 * 60 * 60 * 1000);
+
+        const recentJob = manager.createJob({ oneDriveItemId: 'recent' });
+        manager.updateJob(recentJob.id, { status: 'completed' });
+
+        manager.pruneOldJobs();
+
+        expect(manager.jobs.has(oldJob.id)).toBe(false);
+        expect(manager.jobs.has(recentJob.id)).toBe(true);
+    });
+});

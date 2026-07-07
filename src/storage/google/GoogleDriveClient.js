@@ -8,6 +8,7 @@ class GoogleDriveClient {
 
         this.cachedToken = null;
         this.cachedTokenExpiresAt = 0;
+        this.tokenPromise = null;
     }
 
     isConfigured() {
@@ -23,29 +24,42 @@ class GoogleDriveClient {
             return this.cachedToken;
         }
 
-        const body = new URLSearchParams({
-            client_id: this.clientId,
-            client_secret: this.clientSecret,
-            refresh_token: this.refreshToken,
-            grant_type: 'refresh_token'
-        });
-
-        const response = await fetch('https://oauth2.googleapis.com/token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Failed to obtain Google Drive access token: ${response.status} ${errorText}`);
+        if (this.tokenPromise) {
+            return this.tokenPromise;
         }
 
-        const data = await response.json();
-        this.cachedToken = data.access_token;
-        this.cachedTokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
+        this.tokenPromise = (async () => {
+            try {
+                const body = new URLSearchParams({
+                    client_id: this.clientId,
+                    client_secret: this.clientSecret,
+                    refresh_token: this.refreshToken,
+                    grant_type: 'refresh_token'
+                });
 
-        return this.cachedToken;
+                const response = await fetch('https://oauth2.googleapis.com/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Failed to obtain Google Drive access token: ${response.status} ${errorText}`);
+                }
+
+                const data = await response.json();
+                this.cachedToken = data.access_token;
+                const expiresIn = data.expires_in || 3600;
+                this.cachedTokenExpiresAt = Date.now() + (expiresIn - 60) * 1000;
+
+                return this.cachedToken;
+            } finally {
+                this.tokenPromise = null;
+            }
+        })();
+
+        return this.tokenPromise;
     }
 
     async uploadFile({ name, mimeType, parentFolderId, buffer }) {
