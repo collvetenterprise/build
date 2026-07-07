@@ -11,6 +11,7 @@ const MCPAccessPoint = require('./mcp/MCPAccessPoint');
 const GISProcessor = require('./gis/GISProcessor');
 const AgentPortal = require('./agents/AgentPortal');
 const MGRSHandler = require('./mgrs/MGRSHandler');
+const DriveTransferManager = require('./storage/DriveTransferManager');
 
 class DynamicBuildEnvironment {
     constructor() {
@@ -23,7 +24,8 @@ class DynamicBuildEnvironment {
         this.gisProcessor = new GISProcessor();
         this.agentPortal = new AgentPortal();
         this.mgrsHandler = new MGRSHandler();
-        
+        this.driveTransferManager = new DriveTransferManager();
+
         this.setupMiddleware();
         this.setupRoutes();
     }
@@ -45,11 +47,12 @@ class DynamicBuildEnvironment {
                     mcpAccessPoint: this.mcpAccessPoint.getStatus(),
                     gisProcessor: this.gisProcessor.getStatus(),
                     agentPortal: this.agentPortal.getStatus(),
-                    mgrsHandler: this.mgrsHandler.getStatus()
+                    mgrsHandler: this.mgrsHandler.getStatus(),
+                    driveTransferManager: this.driveTransferManager.getStatus()
                 }
             });
         });
-        
+
         // Build environment routes
         this.app.use('/api/build', this.buildManager.getRouter());
         
@@ -64,6 +67,9 @@ class DynamicBuildEnvironment {
         
         // MGRS functionality routes
         this.app.use('/api/mgrs', this.mgrsHandler.getRouter());
+
+        // OneDrive -> Google Drive transfer routes
+        this.app.use('/api/drive-transfer', this.driveTransferManager.getRouter());
     }
     
     async start() {
@@ -74,7 +80,8 @@ class DynamicBuildEnvironment {
             await this.gisProcessor.initialize();
             await this.agentPortal.initialize();
             await this.mgrsHandler.initialize();
-            
+            await this.driveTransferManager.initialize();
+
             // Start the server
             this.app.listen(this.port, () => {
                 console.log(`Dynamic Build Environment running on port ${this.port}`);
